@@ -2,11 +2,18 @@ import React, { useReducer } from "react";
 import axios from "axios";
 import PokemonContext from "./PokemonContext";
 import PokemonReducer from "./PokemonReducer";
-import { GET_POKEMON, SET_LOADING } from "../types";
+import {
+	GET_POKEMON,
+	SET_LOADING,
+	FILTER_POKEMON,
+	SET_ACTIVE_QUERY,
+} from "../types";
 
 const PokemonState = (props) => {
 	let initialState = {
 		pokemon: [],
+		filteredPokemon: [],
+		activeQuery: "",
 		loading: false,
 		activePokemon: null,
 	};
@@ -84,6 +91,7 @@ const PokemonState = (props) => {
 								return obj;
 							}, {});
 						data.sprites = data.sprites.front_default;
+						data = data.filter((item) => item.sprites.includes(!"null"));
 
 						getColours(data);
 						getIcons(data);
@@ -126,13 +134,25 @@ const PokemonState = (props) => {
 		});
 	};
 
+	const setActiveQuery = (query) => {
+		dispatch({ type: SET_ACTIVE_QUERY, payload: query });
+	};
+
+	const filterPokemon = (filteredPokemon) => {
+		dispatch({ type: FILTER_POKEMON, payload: filteredPokemon });
+	};
+
 	return (
 		<PokemonContext.Provider
 			value={{
 				pokemon: state.pokemon,
+				filteredPokemon: state.filteredPokemon,
+				activeQuery: state.activeQuery,
 				loading: state.loading,
 				activePokemon: state.activePokemon,
 				getPokemon,
+				filterPokemon,
+				setActiveQuery,
 			}}
 		>
 			{props.children}

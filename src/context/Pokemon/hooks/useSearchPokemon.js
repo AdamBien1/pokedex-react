@@ -1,17 +1,33 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useContext } from "react";
+import pokemonContext from "../PokemonContext";
 
-const useSearchPokemon = (query, offset) => {
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(false);
-	const [pokemon, setPokemon] = useState([]);
-	const [hasMore, setHasMore] = useState(false);
+const useSearchPokemon = (query) => {
+	let filteredPokemon;
+	const PokemonContext = useContext(pokemonContext);
+	const { loading, pokemon, filterPokemon, setActiveQuery } = PokemonContext;
 
 	useEffect(() => {
-		setPokemon([]);
+		if (loading) return;
+		// Check if query is a number
+		if (query === "") {
+			filterPokemon([]);
+			setActiveQuery("");
+		} else {
+			if (!isNaN(query)) {
+				setActiveQuery(query);
+				filteredPokemon = pokemon.filter((item) =>
+					item.id.toString().includes(query)
+				);
+				filterPokemon(filteredPokemon);
+			} else {
+				setActiveQuery(query);
+				filteredPokemon = pokemon.filter((item) => item.name.includes(query));
+				filterPokemon(filteredPokemon);
+			}
+		}
 	}, [query]);
 
-	return <div></div>;
+	return { filteredPokemon };
 };
 
 export default useSearchPokemon;
