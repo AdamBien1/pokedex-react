@@ -1,10 +1,13 @@
-import React, { Fragment } from "react";
-import spinner from "../../img/spinner.gif";
+import React, { Fragment, useContext } from "react";
+import pokemonContext from "../../context/Pokemon/PokemonContext";
 
-const Spinner = ({ loading }) => {
+const Spinner = () => {
+	const PokemonContext = useContext(pokemonContext);
+	let { loading } = PokemonContext;
+
 	return (
 		<Fragment>
-			<img src={spinner} alt="Loading..." />
+			{loading && <img src="/img/spinner.gif" alt="Loading..." />}
 		</Fragment>
 	);
 };
