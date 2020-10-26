@@ -1,4 +1,5 @@
 export const GET_POKEMON = "GET_POKEMON";
+export const GET_ACTIVE_POKEMON = "GET_ACTIVE_POKEMON";
 export const SET_LOADING = "SET_LOADING";
 export const FILTER_POKEMON = "FILTER_POKEMON";
 export const SET_ACTIVE_QUERY = "SET_ACTIVE_QUERY";

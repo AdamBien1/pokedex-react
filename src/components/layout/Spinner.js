@@ -7,7 +7,13 @@ const Spinner = () => {
 
 	return (
 		<Fragment>
-			{loading && <img src="/img/spinner.gif" alt="Loading..." />}
+			{loading && (
+				<img
+					className="w-screen mx-auto object-center"
+					src="/img/spinner.gif"
+					alt="Loading..."
+				/>
+			)}
 		</Fragment>
 	);
 };

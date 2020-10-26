@@ -4,6 +4,7 @@ import pokemonContext from "../../context/Pokemon/PokemonContext";
 import PokemonGridItem from "./PokemonGridItem";
 import Spinner from "../layout/Spinner";
 import NoResultsCard from "../layout/NoResultsCard";
+import { Link } from "react-router-dom";
 
 const PokemonGrid = () => {
 	const PokemonContext = useContext(pokemonContext);
@@ -34,25 +35,23 @@ const PokemonGrid = () => {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
+	const showFiltered = Boolean(filteredPokemon.length && activeQuery.length);
+	const showAlert = Boolean(!showFiltered && activeQuery.length);
+	const showDefault = Boolean(pokemon.length && !activeQuery.length);
+
 	return (
 		<Fragment>
 			<div className="flex justify-center items-center flex-col">
-				{/* If loading - show spinner GIF */}
 				{loading && <Spinner />}
-				{/* If no results for input query - show alert card */}
-				{!filteredPokemon.length && activeQuery ? <NoResultsCard /> : null}
-				{/* if there are results for input query - show them */}
-				{filteredPokemon.length
-					? filteredPokemon.map((pokemon) => {
-							return <PokemonGridItem key={pokemon.id} pokemon={pokemon} />;
-					  })
-					: null}
-				{/*if no input query - show in default order  */}
-				{pokemon.length && !filteredPokemon.length && !activeQuery
-					? pokemon.slice(0, limit).map((pokemon) => {
-							return <PokemonGridItem key={pokemon.id} pokemon={pokemon} />;
-					  })
-					: null}
+				{showAlert && <NoResultsCard />}
+				{showFiltered &&
+					filteredPokemon.map((pokemon) => {
+						return <PokemonGridItem key={pokemon.id} pokemon={pokemon} />;
+					})}
+				{showDefault &&
+					pokemon.slice(0, limit).map((pokemon) => {
+						return <PokemonGridItem key={pokemon.id} pokemon={pokemon} />;
+					})}
 			</div>
 		</Fragment>
 	);

@@ -1,11 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import TypeBadge from "./TypeBadge";
 
 const PokemonGridItem = ({ pokemon }) => {
 	let colour = pokemon.types[0].type.colour;
 
 	return (
-		<div
+		<Link
+			to={`/pokemon/${pokemon.name}`}
 			className="max-w-sm w-full rounded-lg border-2 border-solid border-gray-300 overflow-hidden shadow-2xl my-6 relative
 		flex flex-col justify-center items-center cursor-pointer"
 		>
@@ -38,7 +40,7 @@ const PokemonGridItem = ({ pokemon }) => {
 					))}
 				</div>
 			</div>
-		</div>
+		</Link>
 	);
 };
 

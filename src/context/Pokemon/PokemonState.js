@@ -4,6 +4,7 @@ import PokemonContext from "./PokemonContext";
 import PokemonReducer from "./PokemonReducer";
 import {
 	GET_POKEMON,
+	GET_ACTIVE_POKEMON,
 	SET_LOADING,
 	FILTER_POKEMON,
 	SET_ACTIVE_QUERY,
@@ -142,6 +143,15 @@ const PokemonState = (props) => {
 		dispatch({ type: FILTER_POKEMON, payload: filteredPokemon });
 	};
 
+	const getActivePokemon = async (pokemonName) => {
+		dispatch({ type: SET_LOADING });
+
+		const { data } = await axios.get(
+			`https://cors-anywhere.herokuapp.com/https://pokeapi.co/api/v2/pokemon/${pokemonName}`
+		);
+		dispatch({ type: GET_ACTIVE_POKEMON, payload: data });
+	};
+
 	return (
 		<PokemonContext.Provider
 			value={{
@@ -151,6 +161,7 @@ const PokemonState = (props) => {
 				loading: state.loading,
 				activePokemon: state.activePokemon,
 				getPokemon,
+				getActivePokemon,
 				filterPokemon,
 				setActiveQuery,
 			}}

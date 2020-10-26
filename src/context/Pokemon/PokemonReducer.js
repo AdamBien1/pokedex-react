@@ -1,5 +1,6 @@
 import {
 	GET_POKEMON,
+	GET_ACTIVE_POKEMON,
 	FILTER_POKEMON,
 	SET_LOADING,
 	SET_ACTIVE_QUERY,
@@ -14,6 +15,12 @@ export default (state, action) => {
 				...state,
 				loading: false,
 				pokemon: [...state.pokemon, ...payload],
+			};
+		case GET_ACTIVE_POKEMON:
+			return {
+				...state,
+				loading: false,
+				activePokemon: payload,
 			};
 		case FILTER_POKEMON:
 			return {
