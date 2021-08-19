@@ -8,5 +8,6 @@ export default function useTriggerAlert(trigger, payload, dependencyArr = []) {
        if(trigger) {
            alertContext.setAlert(payload)
        } 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, dependencyArr)
 }
