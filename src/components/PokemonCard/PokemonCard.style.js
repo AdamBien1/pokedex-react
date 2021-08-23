@@ -4,13 +4,13 @@ export const CardWrapper = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-content: center;
 
     max-width: 300px;
     width: 100%;
 
-    max-height: 450px;
+    height: 450px;
 
     border-radius: 15px;
     background-color: ${props => props.theme.backgroundColorOpacity};
@@ -48,8 +48,9 @@ export const CardID = styled.span`
 `
 
 export const CardImg = styled.img`
+    object-fit: cover;
     max-width: 100%;
-    height: auto;
+    height: 100%;
     border-right: 4px solid rgba(0, 0, 0, .1);
     border-left: 4px solid rgba(0, 0, 0, .1);
 `

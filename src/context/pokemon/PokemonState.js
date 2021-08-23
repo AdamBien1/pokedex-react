@@ -6,6 +6,7 @@ import PokemonReducer from "./pokemonReducer"
 import {
     GET_POKEMON_NAMES,
     GET_POKEMONS,
+    CLEAR_POKEMONS,
     SEARCH_POKEMON_QUERY,
     CLEAR_POKEMON_QUERY,
     GET_POKEMON,
@@ -17,9 +18,13 @@ import {
 const PokemonState = props => {
     const initialState = {
         totalCount: null,
-        pagination: {},
+        pagination: {
+            next: null,
+            previous: null,
+            nextArray: null,
+        },
 
-        names: [],
+        pokemonNames: [],
         pokemons: [],
         selectedPokemon: {},
 
@@ -32,36 +37,33 @@ const PokemonState = props => {
     const [state, dispatch] = useReducer(PokemonReducer, initialState);
 
     const searchPokemonQuery = async (text) => {
-        try {
-            let filteredList
-            setLoading();
-            clearPokemonQuery();
-
-            if(isNaN(text)) {
-                filteredList = state.names.filter(pokemon => {
-                    return pokemon.name.includes(text)
-                })
-            }
-            else {
-                filteredList = Array(state.names[text - 1])
-            }
-
-            if(filteredList.length > 0) {
-                filteredList.forEach(result => {
-                    getPokemon(result.url, true);
-                })
-            }
-
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000)
-        } catch(err) {
-            console.log(err)
+        let filteredList
+        setLoading();
+        clearPokemonQuery();
+        
+        if(isNaN(text)) {
+            filteredList = state.pokemonNames.filter(pokemon => {
+                return pokemon.name.includes(text.toLowerCase());
+            })
+        } else {
+            filteredList = Array(state.pokemonNames[text - 1])
         }
+
+        if(filteredList.length > 0) {
+            getPokemons(filteredList);
+        }
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000)
     }
 
     const clearPokemonQuery = () => {
         dispatch({type: CLEAR_POKEMON_QUERY})
+    }
+
+    const clearPokemons = () => {
+        dispatch({type: CLEAR_POKEMONS})
     }
 
     const getPokemonNames = async () => {
@@ -74,17 +76,63 @@ const PokemonState = props => {
         }, 1000)
     }
 
-    const getPokemons = async (url) => {
-        let endpoint = url ? url : "https://pokeapi.co/api/v2/pokemon?limit=20&offest=20"
-        setLoading();
+    const getPokemons = async (source) => {
+        switch (typeof source) {
+            // CASE: Fetch new batch of results from API request
+            case "undefined":
+            case "string":
+                let endpoint = source ? source : "https://pokeapi.co/api/v2/pokemon?limit=20&offest=20"
+                setLoading();
+    
+                const response = await axios.get(endpoint);
+    
+                response.data?.results.forEach(result => getPokemon(result.url))
+    
+                setTimeout(() => {
+                    dispatch({type: GET_POKEMONS, payload: response.data})
+                }, 1000)
+                break;
+            // CASE: fetch new batch of results from Array of names
+            case "object":
+                if(Array.isArray(source) && source.length > 20) {
+                    try {
+                        for(const result of source.slice(0, 20)) {
+                            getPokemon(result.url, true);
+                        }
+    
+                        setTimeout(() => {
+                            dispatch({
+                                type: GET_POKEMONS, 
+                                payload: {
+                                    nextArray: source.slice(20, source.length),
+                                }
+                            })
+                        }, 1000)
+                    } catch(err) {
+                        clearPokemonQuery();
+                    }
+                } else if (Array.isArray(source) && source.length > 0) {
+                    try {
+                        for (const result of source) {
+                            getPokemon(result.url, true)
+                        }
 
-        const response = await axios.get(endpoint);
-
-        response.data?.results.forEach(result => getPokemon(result.url))
-
-        setTimeout(() => {
-            dispatch({type: GET_POKEMONS, payload: response.data})
-        }, 1000)
+                        setTimeout(() => {
+                            dispatch({
+                                type: GET_POKEMONS, 
+                                payload: {
+                                    nextArray: null,
+                                }
+                            })
+                        }, 1000)
+                    } catch(err) {
+                        clearPokemonQuery();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     const getPokemon = async (url, searchPokemon = false) => {
@@ -123,6 +171,7 @@ const PokemonState = props => {
               value={{
                 pagination: state.pagination,
                 pokemons: state.pokemons,
+                pokemonNames: state.pokemonNames,
                 queryPokemons: state.queryPokemons,
                 selectedPokemon: state.selectedPokemon,
                 loading: state.loading,
@@ -131,6 +180,7 @@ const PokemonState = props => {
                 getPokemons: getPokemons,
                 searchPokemonQuery: searchPokemonQuery,
                 clearPokemonQuery: clearPokemonQuery,
+                clearPokemons: clearPokemons,
               }}  
             >
                 {props.children}

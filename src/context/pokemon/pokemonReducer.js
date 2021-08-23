@@ -1,4 +1,5 @@
 import { 
+  CLEAR_POKEMONS,
   CLEAR_POKEMON_QUERY, 
   GET_POKEMON, 
   GET_POKEMONS, 
@@ -28,7 +29,7 @@ const githubReducer = (state, action) => {
       case GET_POKEMON_NAMES:
         return {
           ...state,
-          names: action.payload.results, 
+          pokemonNames: action.payload.results, 
           totalCount: action.payload.count,
           loading: false,
         }
@@ -37,7 +38,8 @@ const githubReducer = (state, action) => {
           ...state,
           pagination: {
             next: action.payload?.next,
-            previous: action.payload?.previous
+            previous: action.payload?.previous,
+            nextArray: action.payload?.nextArray,
         } ,
           loading: false
         };
@@ -55,6 +57,13 @@ const githubReducer = (state, action) => {
               },
           ],
         };
+        case CLEAR_POKEMONS: {
+          return {
+            ...state,
+            pokemons: [],
+            loading: false
+          };
+        }
       case CLEAR_POKEMON_QUERY: {
         return {
           ...state,

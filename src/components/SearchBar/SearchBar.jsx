@@ -10,7 +10,17 @@ import useTriggerAlert from '../../hooks/useTriggerAlert'
 
 const SearchBar = () => {
     const pokemonContext = useContext(PokemonContext)
-    const { searchPokemonQuery, clearPokemonQuery, queryPokemons, loading } = pokemonContext;
+    const { searchPokemonQuery, 
+        clearPokemonQuery,  
+        queryPokemons, 
+
+        getPokemons,
+        clearPokemons, 
+        pokemons,
+
+        loading, 
+    } = pokemonContext;
+
     const [placeholderOverflow, setPlaceholderOverflow] = useState(0);
     const [query, setQuery] = useSessionStorage("pokemonQuery", "")
 
@@ -43,7 +53,7 @@ const SearchBar = () => {
         );
 
     // TriggerAlert vars
-        const alertTrigger = queryPokemons.length <= 0 && query !== "" && !loading;
+        const alertTrigger = !queryPokemons.length && query.length && !loading;
         const alertPayload = {
             type: "warning",
             autoclear: false,
@@ -59,19 +69,30 @@ const SearchBar = () => {
         )
 
     const handleSearchPokemons = (e) => {
+        e.preventDefault();
+        
         if(query) {
+            clearPokemons();
             searchPokemonQuery(query);
         } else {
             clearPokemonQuery();
+            if(!pokemons.length) {
+                getPokemons();
+            }
         }
-
         inputRef.current.blur();
-        e.preventDefault();
+        window.scrollTo(0, 0)
     }
 
     const handleReset = () => {
-        setQuery("");
-        clearPokemonQuery();
+        if((queryPokemons.length && !pokemons.length) ||
+            (query.length && !pokemons.length)) {
+            setQuery("");
+            clearPokemonQuery();
+            getPokemons();
+        }
+
+        window.scrollTo(0, 0);
     }
 
     return (
@@ -93,7 +114,7 @@ const SearchBar = () => {
                     >
                         Enter Pokemon name or ID...
                     </SearchBarPlaceholder>
-                    <SearchBarButton>
+                    <SearchBarButton onClick={handleSearchPokemons}>
                         <MagnifyingGlassIcon />
                     </SearchBarButton>
             </SearchBarForm>

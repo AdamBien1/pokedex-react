@@ -10,15 +10,19 @@ import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
 const Home = () => {
     const pokemonContext = useContext(PokemonContext)
-    const { names, pokemons, queryPokemons, pagination, loading, getPokemonNames, getPokemons} = pokemonContext;
+    const { pokemonNames, pokemons, queryPokemons, pagination, loading, getPokemonNames, getPokemons} = pokemonContext;
 
     const alertContext = useContext(AlertContext);
     const { alert } = alertContext;
 
     useEffect(() => {
-        if(!names) getPokemonNames();
-        if(!pagination.next)
-        getPokemons()
+        if(!pokemonNames.length) {
+            getPokemonNames();
+        } 
+
+        if(!pagination.next) {
+            getPokemons()
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -26,7 +30,14 @@ const Home = () => {
             pagination.next, 
             () => getPokemons(pagination.next), 
             loading, 
-            [loading, pagination]
+            [loading, pagination.next]
+        )
+
+    const lastFilteredPokemonRef = useInfiniteScroll(
+        pagination.nextArray,
+        () => getPokemons(pagination.nextArray),
+        loading,
+        [loading, pagination.nextArray?.length]
         )
 
     return (
@@ -35,9 +46,17 @@ const Home = () => {
             {alert.active && <Alert />}
             <GridLayout>
             {queryPokemons.length > 0 ? 
-                queryPokemons.map((pokemon) => (
-                    <PokemonCard key={pokemon.id} pokemon={pokemon} />
-                )) :
+                queryPokemons.map((pokemon, index) => {
+                    if(queryPokemons.length === index+1) {
+                        return (
+                            <PokemonCard forwardRef={lastFilteredPokemonRef} key={pokemon.id} pokemon={pokemon}/>
+                            )
+                        } else {
+                            return (
+                                <PokemonCard key={pokemon.id} pokemon={pokemon}/>
+                                )
+                            }
+                }) :
                 pokemons.map((pokemon, index) => {
                     if(pokemons.length === index+1) {
                         return (
