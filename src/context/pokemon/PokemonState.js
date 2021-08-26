@@ -1,6 +1,5 @@
 import React, { useReducer } from "react"
 import axios from "axios"
-import * as _ from "lodash";
 import PokemonContext from "./pokemonContext"
 import PokemonReducer from "./pokemonReducer"
 import {
@@ -37,6 +36,8 @@ const PokemonState = props => {
     const [state, dispatch] = useReducer(PokemonReducer, initialState);
 
     const searchPokemonQuery = async (text) => {
+        console.log(text)
+        console.log(isNaN(text))
         let filteredList
         setLoading();
         clearPokemonQuery();
@@ -45,9 +46,12 @@ const PokemonState = props => {
             filteredList = state.pokemonNames.filter(pokemon => {
                 return pokemon.name.includes(text.toLowerCase());
             })
+            console.log(state.pokemonNames)
         } else {
             filteredList = Array(state.pokemonNames[text - 1])
         }
+
+        console.log(filteredList)
 
         if(filteredList.length > 0) {
             getPokemons(filteredList);
@@ -71,9 +75,8 @@ const PokemonState = props => {
         setLoading();
 
         const response = await axios.get(endpoint);
-        setTimeout(() => {
-            dispatch({type: GET_POKEMON_NAMES, payload: response.data})
-        }, 1000)
+
+        dispatch({type: GET_POKEMON_NAMES, payload: response.data})
     }
 
     const getPokemons = async (source) => {

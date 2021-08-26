@@ -8,7 +8,7 @@ import useLockBodyScroll from '../../hooks/useLockBodyScroll'
 
 const Alert = () => {
     const {alert, clearAlert} = useContext(AlertContext)
-    useLockBodyScroll(alert.active, [alert.active]);
+    useLockBodyScroll(alert.active, [alert]);
 
     if(alert.active) {
         return (

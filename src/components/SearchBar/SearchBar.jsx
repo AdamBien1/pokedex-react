@@ -1,12 +1,10 @@
-import React, { useEffect, useContext, useState, useRef } from 'react'
+import React, { useContext, useRef } from 'react'
 import useSessionStorage from "../../hooks/useSessionStorage"
 import { CaretUnderscore } from '../../helpers/UtilClasses.style'
-import { MagnifyingGlassIcon, SearchBarButton, SearchBarContainer, SearchBarField, SearchBarPlaceholder, SearchBarForm } from './SearchBar.style'
+import { MagnifyingGlassIcon, SearchBarButton, SearchBarContainer, SearchBarForm } from './SearchBar.style'
 import PokemonContext from '../../context/pokemon/pokemonContext'
-import useDimensions from '../../hooks/useDimensions'
-import useWindowDimensions from '../../hooks/useWindowDimentions'
-import useScrollPlaceholder from '../../hooks/useScrollPlaceholder'
 import useTriggerAlert from '../../hooks/useTriggerAlert'
+import ScrollingInputField from './ScrollingInputField'
 
 const SearchBar = () => {
     const pokemonContext = useContext(PokemonContext)
@@ -18,42 +16,15 @@ const SearchBar = () => {
         clearPokemons, 
         pokemons,
 
+        pokemonNames,
         loading, 
     } = pokemonContext;
 
-    const [placeholderOverflow, setPlaceholderOverflow] = useState(0);
     const [query, setQuery] = useSessionStorage("pokemonQuery", "")
-
-    const [placeholderRef, placeholderDimensions] = useDimensions();
     const inputRef = useRef();
-    const { width } = useWindowDimensions();
-
-    useEffect(() => {
-        if(query !== "") {
-            searchPokemonQuery(query);
-        }
-        return () => {
-            clearPokemonQuery()
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    // ScrollPlaceholder vars
-        const overflowWidth = placeholderRef.current?.scrollWidth - placeholderDimensions.width
-        const placeholderScrollDependencyArr = [
-            placeholderRef,
-            placeholderRef.current?.scrollWidth,
-            placeholderDimensions.width, width
-        ];
-
-    useScrollPlaceholder(
-        overflowWidth, 
-        setPlaceholderOverflow, 
-        placeholderScrollDependencyArr
-        );
 
     // TriggerAlert vars
-        const alertTrigger = !queryPokemons.length && query.length && !loading;
+        let alertTrigger = pokemonNames.length && !loading && !queryPokemons.length && !pokemons.length && query.length;
         const alertPayload = {
             type: "warning",
             autoclear: false,
@@ -80,17 +51,21 @@ const SearchBar = () => {
                 getPokemons();
             }
         }
+
         inputRef.current.blur();
         window.scrollTo(0, 0)
     }
 
     const handleReset = () => {
-        if((queryPokemons.length && !pokemons.length) ||
-            (query.length && !pokemons.length)) {
+        const resetBehaviour = () => {
             setQuery("");
             clearPokemonQuery();
             getPokemons();
         }
+        
+        let hasQueryPokemons = queryPokemons.length && !pokemons.length;
+        let queryNotFound = query.length && !pokemons.length
+        if(hasQueryPokemons || queryNotFound) resetBehaviour();
 
         window.scrollTo(0, 0);
     }
@@ -99,21 +74,12 @@ const SearchBar = () => {
         <SearchBarContainer>
             <SearchBarForm onSubmit={handleSearchPokemons}>
                     <CaretUnderscore />
-                    <SearchBarField
-                        ref={inputRef}
-                        value={query} 
-                        onChange={e => setQuery(e.target.value)}
-                        overflowX={`translateX(-${placeholderOverflow}px)`}
-                        onFocus={handleReset}
-                        />
-                    <SearchBarPlaceholder 
-                        ref={placeholderRef}
-                        style={
-                            {opacity: `${query !== "" ? 0 : 1}`}
-                            }
-                    >
-                        Enter Pokemon name or ID...
-                    </SearchBarPlaceholder>
+                    <ScrollingInputField 
+                        query={query} 
+                        setQuery={setQuery} 
+                        handleReset={handleReset} 
+                        inputRef={inputRef}
+                    />
                     <SearchBarButton onClick={handleSearchPokemons}>
                         <MagnifyingGlassIcon />
                     </SearchBarButton>

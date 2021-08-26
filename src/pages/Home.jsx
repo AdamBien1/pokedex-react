@@ -7,24 +7,32 @@ import AlertContext from '../context/alert/alertContext'
 import Spinner from '../components/Spinner/Spinner';
 import Alert from '../components/Alert/Alert';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
+import useSessionStorage from '../hooks/useSessionStorage'
 
 const Home = () => {
     const pokemonContext = useContext(PokemonContext)
-    const { pokemonNames, pokemons, queryPokemons, pagination, loading, getPokemonNames, getPokemons} = pokemonContext;
+    const { pokemonNames, getPokemonNames, pokemons, getPokemons, queryPokemons, searchPokemonQuery, pagination, loading} = pokemonContext;
 
     const alertContext = useContext(AlertContext);
     const { alert } = alertContext;
 
+    const [query, ] = useSessionStorage("pokemonQuery", "")
+
     useEffect(() => {
         if(!pokemonNames.length) {
             getPokemonNames();
-        } 
-
-        if(!pagination.next) {
-            getPokemons()
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    useEffect(() => {
+        if(query.length) {
+            searchPokemonQuery(query)
+        } else if(!pagination.next) {
+            getPokemons()
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pokemonNames.length])
 
     const lastPokemonRef = useInfiniteScroll(
             pagination.next, 

@@ -13,7 +13,7 @@ export const Nav = styled.nav`
 
 
     width: 100%;
-    height: 100px;
+    height: 80px;
     margin: 0;
     padding: 0 1rem;
     background-color: #CC0000;
@@ -25,16 +25,8 @@ export const Nav = styled.nav`
     box-shadow: 0 15px 25px -10px rgba(0, 0, 0, .25);
 
     @media (max-width: 1024px) {
-        height: 300px;
-        padding: 0;
-    }
-
-    @media (max-width: 768px) {
-        height: 250px;
-    }
-
-    @media (max-width: 480px) {
         height: 200px;
+        padding: 0;
     }
 `
 
@@ -65,11 +57,11 @@ export const NavLogoWrapper = styled.div`
     cursor: pointer;
 
     @media screen and (min-width: 1440px) {
-        margin: 0 1rem;
+        margin: 0 .5rem;
     }
 
     @media screen and (max-width: 1024px) {
-        margin: 1rem 1rem;
+        margin: .5rem 1rem;
     }
 
     @media screen and (max-width: 768px) {
@@ -79,27 +71,27 @@ export const NavLogoWrapper = styled.div`
 
 export const NavLogoTitle = styled.h3`
     font-family: "PressStart2P";
-    font-size: 1.3rem;
-    padding: 0 1rem;
+    font-size: 1.2rem;
+    padding: 0 .75rem;
     color: #fff;
     text-transform: capitalize;
     text-align: center;
     text-shadow: 4px 4px #666;
 
     @media screen and (min-width: 1440px) {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
 
     @media screen and (max-width: 1024px) {
-        font-size: 2.5rem;
-    }
-
-    @media screen and (max-width: 768px) {
         font-size: 1.5rem;
     }
 
+    @media screen and (max-width: 768px) {
+        font-size: 1.25rem;
+    }
+
     @media screen and (max-width: 480px) {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     @media screen and (max-width: 360px) {
@@ -120,29 +112,19 @@ export const NavLogoImg = styled.img.attrs(props => ({
     2px 1px 8px -2px rgba(0, 0, 0, .4);
     z-index: 999;
 
-    @media screen and (min-width: 1440px) {
-        height: 80px;
-        width: 80px
-    }
-
     @media screen and (max-width: 1024px) {
-        height: 100px;
-        width: 100px;
-    }
-
-    @media screen and (max-width: 768px) {
-        height: 80px;
-        width: 80px;
+        height: 50px;
+        width: 50px;
     }
     
-    @media screen and (max-width: 480px) {
-        height: 60px;
-        width: 60px;;
-    }
-
-    @media screen and (max-width: 360px) {
+    @media screen and (max-width: 768px) {
         height: 45px;
         width: 45px;
+    }
+
+    @media screen and (max-width: 480px) {
+        height: 40px;
+        width: 40px;
     }
 `
 

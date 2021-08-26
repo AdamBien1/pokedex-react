@@ -10,7 +10,7 @@ export const CardWrapper = styled.div`
     max-width: 300px;
     width: 100%;
 
-    height: 450px;
+    height: 400px;
 
     border-radius: 15px;
     background-color: ${props => props.theme.backgroundColorOpacity};
@@ -48,7 +48,7 @@ export const CardID = styled.span`
 `
 
 export const CardImg = styled.img`
-    object-fit: cover;
+    object-fit: contain;
     max-width: 100%;
     height: 100%;
     border-right: 4px solid rgba(0, 0, 0, .1);
