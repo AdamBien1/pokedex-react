@@ -26,10 +26,12 @@ const Home = () => {
     }, [])
 
     useEffect(() => {
-        if(query.length) {
-            searchPokemonQuery(query)
-        } else if(!pagination.next) {
-            getPokemons()
+        if(pokemonNames.length) {
+            if(query.length) {
+                searchPokemonQuery(query)
+            } else if(!pagination.next) {
+                getPokemons()
+            }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pokemonNames.length])
